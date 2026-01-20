@@ -31,7 +31,8 @@ vec3 drawGrid(vec3 color, vec3 lineColor, float cellSpacing, float lineWidth) {
   vec2 center = vUvs - 0.5;
   vec2 cell = abs(fract(center * resolution / vec2(cellSpacing)) - 0.5);
   float distToEdge = (0.5 - max(cell.x, cell.y)) * cellSpacing;
-  float lines = smoothstep(0.0, lineWidth, distToEdge);
+  float lines = smoothstep(0.0, lineWidth, distToEdge);    
+  // lineWidth is the point where we decide to stop the line and choose the bg color
 
   color = mix(lineColor, color, lines);
   return color;
