@@ -38,12 +38,33 @@ vec3 drawGrid(vec3 color, vec3 lineColor, float cellSpacing, float lineWidth) {
   return color;
 }
 
+float sdfCircle(vec2 p, float r) {
+  return length(p) - r;
+}
+
+float sdfLine(vec2 p, vec2 a, vec2 b)
+{
+  vec2 pa = p - a;
+  vec2 ba = b - a;
+  float t = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);   
+  // we use clamp cause it's a line segment not an infinite line
+  // if the perpendicular foot falls outside, we choose the nearest endpoint.
+
+  return length(pa - ba * t);
+}
+
 void main() {
   vec2 pixelCoords = (vUvs - 0.5) * resolution;
   
   vec3 color = BackgroundColor();
   color = drawGrid(color, vec3(0.5), 10.0, 1.0);
   color = drawGrid(color, vec3(0.0), 100.0, 2.0);
+
+  float d = sdfCircle(pixelCoords, 100.0);
+  // color = mix(RED, color, step(0.0, d));
+
+  float d2 = sdfLine(pixelCoords, vec2(-100.0, -50.0), vec2(-75.0, 100.0));
+  color = mix(RED, color, step(5.0, d2));
 
   gl_FragColor = vec4(color, 1.0);
 }
